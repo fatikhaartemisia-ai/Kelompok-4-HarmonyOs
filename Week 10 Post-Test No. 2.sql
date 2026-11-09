@@ -101,6 +101,28 @@ CREATE TABLE IF NOT EXISTS laporan (
     FOREIGN KEY (id_admin) REFERENCES pengurus_admin(id_admin) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
+-- Memeriksa Struktur Relasi & Tabel
+SHOW TABLES;
+SHOW CREATE TABLE nasabah;
+SHOW CREATE TABLE setoran;
+SHOW TABLE STATUS;
+
+-- Data Awal Sampel
+INSERT INTO jenis_sampah (id_jenis, nama_jenis, kategori) VALUES
+    (1, 'Plastik PET', 'Plastik'),
+    (2, 'Kardus', 'Kertas'),
+    (3, 'Kertas HVS', 'Kertas'),
+    (4, 'Botol Kaca', 'Kaca'),
+    (5, 'Kaleng Aluminium', 'Logam');
+
+INSERT INTO harga_sampah (id_jenis, harga_per_kg, tanggal_berlaku) VALUES
+    (1, 3500, '2026-01-01'),
+    (2, 2000, '2026-01-01'),
+    (3, 2500, '2026-01-01'),
+    (4, 1000, '2026-01-01'),
+    (5, 12000, '2026-01-01');
+
+
 -- Operasi CRUD
 -- 1. CREATE (Menambahkan Data Baru)
 -- Memasukkan akun pengguna dan data nasabah yang terikat
@@ -109,6 +131,12 @@ VALUES ('budi_nasabah', 'hash_password_123', 'nasabah');
 
 INSERT INTO nasabah (id_pengguna, nama_nasabah, alamat, no_telepon) 
 VALUES (LAST_INSERT_ID(), 'Budi Santoso', 'Jl. Pemuda No. 15', '081234567890');
+
+INSERT INTO pengguna (username, password, role) 
+VALUES ('rina_petugas', 'hash_password_123', 'petugas');
+
+INSERT INTO petugas (id_pengguna, nama_petugas, no_telepon) 
+VALUES (LAST_INSERT_ID(), 'Rina', '081300000001');
 
 -- 2. READ (Membaca/Menampilkan Data)
 -- Menampilkan data nasabah beserta username akun login-nya
