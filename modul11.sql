@@ -1,4 +1,39 @@
--- F.2 Membuat Database dan Tabel
+-- Mengetahui versi DBMS
+SELECT VERSION();
+
+-- Mengetahui informasi DBMS
+SELECT @@version_comment;
+
+-- Mengetahui database yang tersedia
+SHOW DATABASES;
+
+-- Melihat storage engine
+SHOW ENGINES;
+
+-- Melihat karakteristik server
+SHOW VARIABLES LIKE 'character_set_server';
+
+```
+-- Memeriksa storage engine InnoDB
+SHOW ENGINES;
+
+-- Memeriksa dukungan fungsi JSON
+SELECT
+    JSON_VALID('{"nama":"Budi"}') AS json_valid,
+    JSON_EXTRACT(
+        '{"nama":"Budi"}',
+        '$.nama'
+    ) AS nama;
+
+-- Memeriksa informasi waktu server
+SELECT NOW();
+
+-- Memeriksa database aktif
+SELECT DATABASE();
+```
+
+-- Melihat collation
+SHOW VARIABLES LIKE 'collation_server';-- F.2 Membuat Database dan Tabel
 DROP DATABASE IF EXISTS praktikum_modul11_banksampah;
 CREATE DATABASE praktikum_modul11_banksampah
     CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
