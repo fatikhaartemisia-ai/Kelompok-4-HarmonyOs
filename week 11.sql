@@ -205,3 +205,333 @@ CREATE TABLE penjualan_kompos (
     CONSTRAINT chk_total_jual
         CHECK (total_bayar = ROUND(jumlah_kg * harga_satuan, 2))
 ) ENGINE=InnoDB;
+
+ALTER TABLE users
+    ADD COLUMN profil_tambahan JSON NULL AFTER status_akun;
+ 
+UPDATE users SET profil_tambahan = '{
+    "akses": ["master_harga", "verifikasi_akun", "produksi_kompos"]
+}' WHERE id_user = 1;
+ 
+UPDATE users SET profil_tambahan = '{"masa_jabatan": "2025-2028"}' WHERE id_user = 2;
+UPDATE users SET profil_tambahan = '{"masa_jabatan": "2025-2028"}' WHERE id_user = 3;
+ 
+UPDATE users SET profil_tambahan = '{
+    "anggota_keluarga": 4,
+    "sumber_sampah": ["dapur"],
+    "hari_jemput_favorit": "Sabtu"
+}' WHERE id_user = 4;
+ 
+UPDATE users SET profil_tambahan = '{
+    "anggota_keluarga": 3,
+    "sumber_sampah": ["ternak", "kebun"],
+    "jumlah_ternak": {"kambing": 6, "ayam": 20}
+}' WHERE id_user = 5;
+ 
+UPDATE users SET profil_tambahan = '{
+    "anggota_keluarga": 5,
+    "sumber_sampah": ["dapur"]
+}' WHERE id_user = 6;
+ 
+UPDATE users SET profil_tambahan = '{
+    "kendaraan": "motor",
+    "plat_nomor": "AE 4521 XY",
+    "wilayah_tugas": ["RT 01/RW 03", "RT 02/RW 03"]
+}' WHERE id_user = 7;
+ 
+UPDATE users SET profil_tambahan = '{
+    "jenis_pembeli": "petani",
+    "luas_lahan_m2": 10000,
+    "komoditas": ["padi", "jagung"]
+}' WHERE id_user = 8;
+ 
+UPDATE users SET profil_tambahan = '{
+    "jenis_pembeli": "pehobi tanaman",
+    "koleksi": "anggrek"
+}' WHERE id_user = 9;
+ 
+SELECT id_user, nama, peran, profil_tambahan FROM users;
+
+ALTER TABLE kategori_sampah ADD COLUMN atribut JSON NULL;
+ 
+UPDATE kategori_sampah SET atribut = '{
+    "contoh": ["kotoran sapi", "kotoran kambing", "kotoran ayam"],
+    "syarat": "kering angin, tidak tercampur tanah",
+    "ditolak": ["plastik", "kaca", "bahan berbahaya"]
+}' WHERE id_kategori = 1;
+ 
+UPDATE kategori_sampah SET atribut = '{
+    "contoh": ["daun kering", "rumput", "ranting cacah"],
+    "ukuran_maks_cm": 10,
+    "ditolak": ["plastik", "kaca", "bahan berbahaya"]
+}' WHERE id_kategori = 2;
+ 
+UPDATE kategori_sampah SET atribut = '{
+    "contoh": ["sisa sayur", "kulit buah", "ampas kopi"],
+    "syarat": "ditiriskan sebelum disetor",
+    "ditolak": ["plastik", "kaca", "bahan berbahaya", "minyak jelantah"]
+}' WHERE id_kategori = 3;
+ 
+ALTER TABLE detail_jemput ADD COLUMN catatan_pemilahan JSON NULL;
+ 
+UPDATE detail_jemput
+SET catatan_pemilahan = '{"bahan_asing": [], "kondisi": "kering"}'
+WHERE id_detail = 1;
+ 
+UPDATE detail_jemput
+SET catatan_pemilahan = '{"bahan_asing": ["plastik", "kaca"], "kondisi": "basah"}'
+WHERE id_detail = 2;
+ 
+UPDATE detail_jemput
+SET catatan_pemilahan = '{"bahan_asing": [], "kondisi": "kering"}'
+WHERE id_detail = 3;
+UPDATE detail_jemput SET catatan_pemilahan = '{
+    "bahan_asing": ["plastik"],
+    "kondisi": "basah",
+    "tindakan": "dipilah ulang oleh kurir"
+}' WHERE id_detail = 4;
+ 
+SELECT nama_kategori, atribut FROM kategori_sampah;
+SELECT id_detail, id_jemput, status_pemilahan, catatan_pemilahan FROM detail_jemput;
+ALTER TABLE stok_kompos ADD COLUMN spesifikasi JSON NULL AFTER stok_kg;
+ 
+UPDATE stok_kompos SET spesifikasi = '{
+    "bentuk": "curah halus",
+    "kemasan": "karung 25 kg",
+    "kadar_air_persen": 35,
+    "organik": true
+}' WHERE id_stok = 1;
+ 
+UPDATE stok_kompos SET spesifikasi = '{
+    "bentuk": "granul",
+    "kemasan": "pouch 5 kg",
+    "kadar_air_persen": 30,
+    "organik": true,
+    "rasio_c_n": "15:1"
+}' WHERE id_stok = 2;
+ 
+ALTER TABLE produksi_kompos ADD COLUMN parameter_fermentasi JSON NULL;
+ 
+UPDATE produksi_kompos SET parameter_fermentasi = '{
+    "aktivator": "EM4", "suhu_rata_rata_c": 55,
+    "pembalikan_kali": 6, "kelembapan_persen": 60
+}' WHERE id_produksi = 1;
+ 
+UPDATE produksi_kompos SET parameter_fermentasi = '{
+    "aktivator": "EM4", "suhu_rata_rata_c": 48, "pembalikan_kali": 2
+}' WHERE id_produksi = 2;
+ 
+UPDATE produksi_kompos SET parameter_fermentasi = '{
+    "aktivator": "Trichoderma", "suhu_rata_rata_c": 57,
+    "pembalikan_kali": 7, "kelembapan_persen": 55,
+    "pengayakan": "ayakan 10 mm"
+}' WHERE id_produksi = 3;
+ 
+ALTER TABLE penarikan_saldo ADD COLUMN detail_penarikan JSON NULL;
+ 
+-- atribut penarikan berbeda: online (transfer) vs offline (tunai)
+UPDATE penarikan_saldo SET detail_penarikan = JSON_OBJECT(
+    'bank', 'BRI', 'no_rekening', '****4321', 'atas_nama', 'Siti Aminah',
+    'id_transfer', 'TRF-20261106-0001', 'status_transfer', 'berhasil')
+WHERE id_penarikan = 1;
+ 
+UPDATE penarikan_saldo SET detail_penarikan = JSON_OBJECT(
+    'lokasi_pencairan', 'Pos RT 01', 'divalidasi_kurir', 'Joko Santoso',
+    'kode_terverifikasi', true)
+WHERE id_penarikan = 2;
+ 
+SELECT nama_produk, spesifikasi FROM stok_kompos;
+SELECT id_produksi, status_produksi, parameter_fermentasi FROM produksi_kompos;
+SELECT id_penarikan, jenis_penarikan, detail_penarikan FROM penarikan_saldo;
+
+-- atribut yang tidak dimiliki suatu pengguna akan bernilai NULL
+SELECT nama, peran,
+       JSON_EXTRACT(profil_tambahan, '$.kendaraan') AS kendaraan
+FROM users;
+ 
+SELECT nama, JSON_EXTRACT(profil_tambahan, '$.jenis_pembeli') AS jenis_pembeli
+FROM users WHERE peran = 'pembeli';
+ 
+SELECT nama, profil_tambahan->>'$.anggota_keluarga' AS anggota_keluarga
+FROM users WHERE peran = 'nasabah' AND status_akun = 'aktif';
+ 
+SELECT nama_produk, JSON_EXTRACT(spesifikasi, '$.rasio_c_n') AS rasio_c_n
+FROM stok_kompos;
+
+-- Nasabah yang menyetor kotoran ternak
+SELECT nama, alamat FROM users
+WHERE peran = 'nasabah'
+  AND JSON_CONTAINS(profil_tambahan, '"ternak"', '$.sumber_sampah');
+ 
+-- Pembeli berjenis petani
+SELECT nama, no_hp FROM users
+WHERE JSON_UNQUOTE(JSON_EXTRACT(profil_tambahan, '$.jenis_pembeli')) = 'petani';
+ 
+-- Kurir yang bertugas di RT 01/RW 03 (pencarian di dalam array)
+SELECT nama FROM users
+WHERE peran = 'kurir'
+  AND JSON_CONTAINS(profil_tambahan, '"RT 01/RW 03"', '$.wilayah_tugas');
+ 
+-- Kompos organik berbentuk granul
+SELECT nama_produk, harga_per_kg, stok_kg FROM stok_kompos
+WHERE JSON_CONTAINS(spesifikasi, 'true', '$.organik')
+  AND JSON_UNQUOTE(JSON_EXTRACT(spesifikasi, '$.bentuk')) = 'granul';
+ 
+-- Setoran yang mengandung plastik (KF-04, penilaian pemilahan)
+SELECT id_detail, id_jemput, status_pemilahan,
+       JSON_EXTRACT(catatan_pemilahan, '$.bahan_asing') AS bahan_asing
+FROM detail_jemput
+WHERE JSON_CONTAINS(catatan_pemilahan, '"plastik"', '$.bahan_asing');
+
+-- kadar air kompos curah turun setelah dijemur ulang
+UPDATE stok_kompos
+SET spesifikasi = JSON_SET(spesifikasi, '$.kadar_air_persen', 32)
+WHERE nama_produk = 'Kompos Padat Curah';
+ 
+SELECT nama_produk, JSON_EXTRACT(spesifikasi, '$.kadar_air_persen') AS kadar_air
+FROM stok_kompos WHERE nama_produk = 'Kompos Padat Curah';
+ 
+-- dua atribut sekaligus pada batch yang masih fermentasi
+UPDATE produksi_kompos
+SET parameter_fermentasi =
+    JSON_SET(parameter_fermentasi, '$.suhu_rata_rata_c', 52, '$.pembalikan_kali', 4)
+WHERE id_produksi = 2;
+ 
+SELECT id_produksi, parameter_fermentasi FROM produksi_kompos WHERE id_produksi = 2;
+
+-- atribut baru (promo) pada kompos curah, tanpa mengubah struktur tabel
+UPDATE stok_kompos
+SET spesifikasi = JSON_SET(spesifikasi, '$.promo', 'Diskon 10% pembelian di atas 20 kg')
+WHERE nama_produk = 'Kompos Padat Curah';
+ 
+SELECT nama_produk, spesifikasi FROM stok_kompos
+WHERE nama_produk = 'Kompos Padat Curah';
+ 
+-- menambah elemen pada array: Rina mulai menyetor sampah kebun
+UPDATE users
+SET profil_tambahan = JSON_ARRAY_APPEND(profil_tambahan, '$.sumber_sampah', 'kebun')
+WHERE nama = 'Rina Wulandari';
+ 
+SELECT nama, JSON_EXTRACT(profil_tambahan, '$.sumber_sampah') AS sumber_sampah
+FROM users WHERE nama = 'Rina Wulandari';
+ 
+-- catatan pada penarikan offline
+UPDATE penarikan_saldo
+SET detail_penarikan =
+    JSON_SET(detail_penarikan, '$.catatan', 'uang diserahkan langsung')
+WHERE id_penarikan = 2;
+ 
+SELECT id_penarikan, detail_penarikan FROM penarikan_saldo WHERE id_penarikan = 2;
+
+
+-- promo berakhir
+UPDATE stok_kompos
+SET spesifikasi = JSON_REMOVE(spesifikasi, '$.promo')
+WHERE nama_produk = 'Kompos Padat Curah';
+ 
+-- Rina tidak lagi memilih hari jemput favorit
+UPDATE users
+SET profil_tambahan = JSON_REMOVE(profil_tambahan, '$.hari_jemput_favorit')
+WHERE nama = 'Rina Wulandari';
+ 
+-- catatan penarikan dihapus
+UPDATE penarikan_saldo
+SET detail_penarikan = JSON_REMOVE(detail_penarikan, '$.catatan')
+WHERE id_penarikan = 2;
+ 
+SELECT nama_produk, spesifikasi FROM stok_kompos;
+SELECT nama, profil_tambahan FROM users WHERE nama = 'Rina Wulandari';
+SELECT id_penarikan, detail_penarikan FROM penarikan_saldo;
+
+
+SELECT JSON_OBJECT(
+    'nasabah', 'Rina Wulandari',
+    'wilayah', 'RT 01/RW 03',
+    'saldo', 11000
+) AS data_nasabah;
+ 
+SELECT JSON_ARRAY('Kotoran Ternak', 'Sampah Kebun', 'Sampah Dapur') AS kategori_sampah;
+ 
+SELECT JSON_VALID('{"kategori":"Sampah Dapur","bersih":true}') AS json_valid;
+ 
+SELECT nama_kategori, JSON_LENGTH(atribut) AS jumlah_atribut FROM kategori_sampah;
+ 
+SELECT nama_produk, JSON_KEYS(spesifikasi) AS daftar_atribut FROM stok_kompos;
+
+
+ALTER TABLE users
+    ADD COLUMN jenis_pembeli VARCHAR(30)
+        GENERATED ALWAYS AS (
+            JSON_UNQUOTE(JSON_EXTRACT(profil_tambahan, '$.jenis_pembeli'))
+        ) VIRTUAL,
+    ADD INDEX idx_users_jenis_pembeli (jenis_pembeli);
+ 
+EXPLAIN SELECT nama FROM users WHERE jenis_pembeli = 'petani';
+
+
+SELECT w.rt, w.rw, k.nama_kategori, d.status_pemilahan,
+       SUM(d.berat_aktual) AS total_kg,
+       SUM(d.subtotal)     AS total_rupiah
+FROM detail_jemput d
+JOIN transaksi_jemput t ON t.id_jemput   = d.id_jemput
+JOIN users u            ON u.id_user     = t.id_nasabah
+JOIN wilayah_rtrw w     ON w.id_wilayah  = u.id_wilayah
+JOIN kategori_sampah k  ON k.id_kategori = d.id_kategori
+WHERE t.status_jemput = 'selesai'
+  AND t.tanggal_jemput >= '2026-11-01' AND t.tanggal_jemput < '2026-12-01'
+GROUP BY w.rt, w.rw, k.nama_kategori, d.status_pemilahan
+ORDER BY w.rt, w.rw, k.nama_kategori;
+
+SELECT DATE_FORMAT(p.tanggal_pesan, '%Y-%m') AS bulan,
+       s.nama_produk,
+       SUM(p.jumlah_kg)   AS kg_terjual,
+       SUM(p.total_bayar) AS pendapatan
+FROM penjualan_kompos p
+JOIN stok_kompos s ON s.id_stok = p.id_stok
+WHERE p.status_pembayaran = 'lunas'
+GROUP BY DATE_FORMAT(p.tanggal_pesan, '%Y-%m'), s.nama_produk
+ORDER BY s.nama_produk;
+
+START TRANSACTION;
+ 
+UPDATE stok_kompos SET stok_kg = stok_kg - 10 WHERE id_stok = 1;
+UPDATE penjualan_kompos SET status_pembayaran = 'lunas' WHERE id_penjualan = 3;
+ 
+SELECT id_stok, nama_produk, stok_kg FROM stok_kompos
+WHERE id_stok = 1;                                  -- 30.00
+SELECT id_penjualan, status_pembayaran FROM penjualan_kompos
+WHERE id_penjualan = 3;                             -- lunas
+ 
+ROLLBACK;
+ 
+SELECT id_stok, nama_produk, stok_kg FROM stok_kompos
+WHERE id_stok = 1;                                  -- kembali 40.00
+SELECT id_penjualan, status_pembayaran FROM penjualan_kompos
+WHERE id_penjualan = 3;                             -- belum_lunas
+
+START TRANSACTION;
+
+UPDATE dompet_saldo
+SET saldo_total = saldo_total - 1000
+WHERE id_user = 6;
+
+INSERT INTO penarikan_saldo
+(id_user, jumlah, saldo_setelah, jenis_penarikan, kode_unik, status_penarikan)
+VALUES (6, 1000, 4400, 'offline', '615203', 'diajukan');
+
+ROLLBACK;
+
+SELECT id_user, saldo_total
+FROM dompet_saldo
+WHERE id_user = 6;
+
+-- KF-03: estimasi berat kurang dari 3 kg
+INSERT INTO transaksi_jemput (id_nasabah, estimasi_berat) VALUES (6, 2.00);
+ 
+-- KF-06: sisa saldo di bawah Rp10.000
+INSERT INTO penarikan_saldo (id_user, jumlah, saldo_setelah, jenis_penarikan)
+VALUES (6, 1000, 4400, 'online');
+ 
+-- KF-07: penarikan offline tanpa kode unik
+INSERT INTO penarikan_saldo (id_user, jumlah, saldo_setelah, jenis_penarikan)
+VALUES (4, 1000, 10000, 'offline');
