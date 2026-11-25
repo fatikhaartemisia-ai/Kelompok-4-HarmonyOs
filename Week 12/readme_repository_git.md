@@ -5,13 +5,13 @@
 **Proyek PjBL:** Aplikasi Bank Sampah Organik & Penjualan Kompos Digital Berbasis Kemitraan RT/RW untuk Mendukung Ekonomi Sirkular (SDG 12)
 
 **Identitas Kelompok:**
-1. Fatikha Artemisia (NIM: 264311016) - TRPL 1A
-2. [Isi nama anggota 2] ([NIM])
-3. [Isi nama anggota 3] ([NIM])
+1. Fakhriyatul Muzakkina       (NIM: 264311015) - TRPL 1A
+2. Fatikha Artemisia           (NIM: 264311016) - TRPL 1A
+3. Nashwa Nadia Nurlatifa      (NIM: 264311023) - TRPL 1A
 
 ---
 
-## 📁 Struktur Repositori
+## Struktur Repositori
 
 ```text
 praktikum_modul12/
@@ -30,7 +30,7 @@ praktikum_modul12/
 
 ---
 
-## 🚀 Panduan Jalankan Cluster Lokal (CockroachDB)
+## Panduan Jalankan Cluster Lokal (CockroachDB)
 
 1. **Inisialisasi Single-Node Cluster (Local Mode):**
    ```cmd
@@ -44,6 +44,6 @@ praktikum_modul12/
 
 ---
 
-## 🛡️ Keamanan & Kredensial
+## Keamanan & Kredensial
 - Seluruh kredensial dan password pada script bersifat *placeholder* (`GANTI_DENGAN_PASSWORD_KUAT`).
 - Tidak ada password atau sertifikat SSL asli yang diunggah ke repositori Git publik.
